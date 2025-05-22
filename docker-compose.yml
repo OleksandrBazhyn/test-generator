@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: testgen-db
+    restart: always
+    environment:
+      POSTGRES_DB: testgen
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./server
+    container_name: testgen-backend
+    restart: always
+    env_file:
+      - ./server/.env.docker
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server:/usr/src/app
+    working_dir: /usr/src/app
+    command: npm run build && npm run start
+
+  frontend:
+    build: ./client
+    container_name: testgen-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/usr/src/app
+    working_dir: /usr/src/app
+    command: npm run build && npm run preview
+
+volumes:
+  db-data:
