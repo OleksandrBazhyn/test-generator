@@ -1,20 +1,43 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-import type { Test } from '../types';
+import type { Test, TestMeta } from '../types';
 
+/**
+ * Generates a new test via backend API.
+ * @param meta Test meta info
+ * @param count Number of questions
+ * @returns Object with array of tests and testId
+ * @throws Error if backend call fails
+ */
 export const generateTests = async (
-  subject: string, topic: string, grade: string, count: number
+  meta: TestMeta,
+  count: number
 ): Promise<{ tests: Test[]; testId: number }> => {
   const res = await fetch(`${API_URL}/generate-tests`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ subject, topic, grade, count }),
+    body: JSON.stringify({ ...meta, count }),
   });
-  if (!res.ok) throw new Error('Failed to generate tests');
+  if (!res.ok) {
+    let errorText = 'Failed to generate tests';
+    try {
+      const data = await res.json();
+      if (data?.error) errorText = data.error;
+    } catch {/* ignore */}
+    throw new Error(errorText);
+  }
   const data = await res.json();
-  return { tests: data.tests, testId: data.testId };
+  // Server wraps response in { success, data }
+  return { tests: data.data.tests, testId: data.data.testId };
 };
 
+/**
+ * Checks user answers via backend API.
+ * @param testId Test ID
+ * @param userAnswers Array of selected answers
+ * @returns Object with score and mistakes
+ * @throws Error if backend call fails
+ */
 export const checkAnswers = async (
   testId: number, userAnswers: string[]
 ): Promise<{ score: number; mistakes: any[] }> => {
@@ -23,11 +46,30 @@ export const checkAnswers = async (
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ testId, userAnswers }),
   });
-  if (!res.ok) throw new Error('Failed to check answers');
-  return res.json();
+  if (!res.ok) {
+    let errorText = 'Failed to check answers';
+    try {
+      const data = await res.json();
+      if (data?.error) errorText = data.error;
+    } catch {/* ignore */}
+    throw new Error(errorText);
+  }
+  const data = await res.json();
+  // Server wraps response in { success, data }
+  return data.data;
 };
 
-export const exportPdf = async (questions: Test[], answers: string[] | null): Promise<Blob> => {
+/**
+ * Exports test and user answers as a PDF via backend API.
+ * @param questions Array of questions
+ * @param answers Array of user answers
+ * @returns PDF file as Blob
+ * @throws Error if backend call fails
+ */
+export const exportPdf = async (
+  questions: Test[],
+  answers: string[] | null
+): Promise<Blob> => {
   const res = await fetch(`${API_URL}/export-pdf`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

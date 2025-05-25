@@ -8,11 +8,22 @@ interface TestListProps {
   showCorrect?: boolean;
 }
 
-export const TestList: React.FC<TestListProps> = ({ tests, userAnswers, onAnswer, showCorrect }) => (
+/**
+ * TestList - displays a list of test questions with answer options.
+ * Shows correct answers if showCorrect is true.
+ */
+export const TestList: React.FC<TestListProps> = ({
+  tests,
+  userAnswers,
+  onAnswer,
+  showCorrect,
+}) => (
   <div>
     {tests.map((q, idx) => (
       <div key={idx} style={{ marginBottom: 16, border: '1px solid #eee', padding: 8 }}>
-        <div><strong>{idx + 1}. {q.question}</strong></div>
+        <div>
+          <strong>{idx + 1}. {q.question}</strong>
+        </div>
         {Object.entries(q.options).map(([letter, option]) => (
           <div key={letter}>
             <label>

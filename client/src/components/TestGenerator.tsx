@@ -1,32 +1,43 @@
 import React, { useState } from 'react';
 import { generateTests } from '../api/api';
-import type { Test } from '../types';
+import type { Test, TestMeta } from '../types';
 
-// ОНОВЛЕНИЙ інтерфейс пропсів: тепер приймає 3 аргументи!
 interface TestGeneratorProps {
   onTestsGenerated: (
     tests: Test[],
-    testMeta: { subject: string; topic: string; grade: string },
+    testMeta: TestMeta,
     testId: number
   ) => void;
 }
 
+/**
+ * TestGenerator - form for specifying parameters and generating a new test.
+ */
 export const TestGenerator: React.FC<TestGeneratorProps> = ({ onTestsGenerated }) => {
-  const [subject, setSubject] = useState('Математика');
+  const [subject, setSubject] = useState('');
+  const [grade, setGrade] = useState('');
   const [topic, setTopic] = useState('');
-  const [grade, setGrade] = useState('9');
+  const [description, setDescription] = useState('');
+  const [difficulty, setDifficulty] = useState('easy');
   const [count, setCount] = useState(5);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Handles test generation via backend.
+   */
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!subject.trim() || !topic.trim() || count < 1) {
+      alert('Please provide subject, topic, and valid count');
+      return;
+    }
     setLoading(true);
     try {
-      // generateTests повертає { tests, testId }
-      const { tests, testId } = await generateTests(subject, topic, grade, count);
-      onTestsGenerated(tests, { subject, topic, grade }, testId); // 3 аргументи!
+      const meta: TestMeta = { subject, topic, description, difficulty, grade };
+      const { tests, testId } = await generateTests(meta, count);
+      onTestsGenerated(tests, meta, testId);
     } catch (err: any) {
-      alert(err.message || "Не вдалося згенерувати тести");
+      alert(err.message || "Failed to generate tests");
     } finally {
       setLoading(false);
     }
@@ -34,21 +45,54 @@ export const TestGenerator: React.FC<TestGeneratorProps> = ({ onTestsGenerated }
 
   return (
     <form onSubmit={handleGenerate} style={{ marginBottom: 24 }}>
-      <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Предмет" required />
-      <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="Тема" required />
-      <input value={grade} onChange={e => setGrade(e.target.value)} placeholder="Клас" required />
+      <input
+        value={subject}
+        onChange={e => setSubject(e.target.value)}
+        placeholder="Subject (e.g. math, history, ...)"
+        required
+        style={{ marginBottom: 8 }}
+      />
+      <input
+        value={topic}
+        onChange={e => setTopic(e.target.value)}
+        placeholder="Test topic (any: history, programming, HR...)"
+        required
+      />
+      <input
+        value={description}
+        onChange={e => setDescription(e.target.value)}
+        placeholder="Extra requirements or description (optional)"
+      />
+      <input
+        value={grade}
+        onChange={e => setGrade(e.target.value)}
+        placeholder="Grade/level (optional)"
+        style={{ marginBottom: 8 }}
+      />
+      <select
+        value={difficulty}
+        onChange={e => setDifficulty(e.target.value)}
+        style={{ marginRight: 8 }}
+      >
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
       <input
         type="number"
         min={1}
         max={20}
         value={count}
         onChange={e => setCount(Number(e.target.value))}
-        placeholder="Кількість питань"
+        placeholder="Number of questions"
         required
       />
       <button type="submit" disabled={loading}>
-        {loading ? "Генеруємо..." : "Згенерувати тести"}
+        {loading ? "Generating..." : "Generate Tests"}
       </button>
+      <p style={{ fontSize: 13, color: "#666" }}>
+        You can generate tests on any topic—even memes or professional tasks!
+      </p>
     </form>
   );
 };

@@ -5,24 +5,28 @@ interface TestCheckerProps {
   mistakes: { question: string; correct: string; your: string }[];
 }
 
+/**
+ * TestChecker - displays user's score and list of mistakes for a test.
+ */
 export const TestChecker: React.FC<TestCheckerProps> = ({ score, mistakes }) => (
   <div style={{ marginTop: 24 }}>
-    <h2>Результат</h2>
-    <p>Ваша оцінка: {score}</p>
-    {mistakes.length > 0 && (
+    <h2>Result</h2>
+    <p>Your score: {score}</p>
+    {mistakes.length > 0 ? (
       <div>
-        <h3>Помилки:</h3>
+        <h3>Mistakes:</h3>
         <ul>
           {mistakes.map((m, i) => (
             <li key={i}>
-              <strong>Питання:</strong> {m.question}<br />
-              <strong>Правильна відповідь:</strong> {m.correct} <br />
-              <strong>Ваша відповідь:</strong> {m.your}
+              <strong>Question:</strong> {m.question}<br />
+              <strong>Correct answer:</strong> {m.correct} <br />
+              <strong>Your answer:</strong> {m.your}
             </li>
           ))}
         </ul>
       </div>
+    ) : (
+      <p>All answers correct! Congratulations!</p>
     )}
-    {mistakes.length === 0 && <p>Усі відповіді вірні! Вітаємо!</p>}
   </div>
 );

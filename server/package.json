@@ -6,7 +6,9 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:integration": "jest --config jest.integration.config.js",
+    "test:unit": "jest --config jest.unit.config.js",
     "dev": "ts-node-dev src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js"
@@ -21,7 +23,10 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "pdfkit": "^0.17.1",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@types/cors": "^2.8.18",

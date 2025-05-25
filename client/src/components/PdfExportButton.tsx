@@ -7,20 +7,36 @@ interface PdfExportButtonProps {
   answers: string[];
 }
 
+/**
+ * PdfExportButton - exports questions and user's answers to PDF via backend.
+ */
 export const PdfExportButton: React.FC<PdfExportButtonProps> = ({ questions, answers }) => {
+  /**
+   * Handles PDF export and triggers file download.
+   */
   const handleExport = async () => {
     try {
+      if (!questions?.length) {
+        alert('No questions to export!');
+        return;
+      }
       const blob = await exportPdf(questions, answers);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'tests.pdf';
+      a.download = 'test.pdf';
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
-      alert(err.message || "Не вдалося експортувати PDF");
+      alert(err?.message || "Could not export PDF");
     }
   };
 
-  return <button onClick={handleExport} style={{ marginTop: 12 }}>Експортувати у PDF</button>;
+  return (
+    <button onClick={handleExport} style={{ marginTop: 12 }}>
+      Export to PDF
+    </button>
+  );
 };
