@@ -1,4 +1,4 @@
-import { Test, TestOption } from '../types'
+import type { Test, TestOption } from '../types'
 
 export const generateTests = async (
     subject: string, topic: string, grade: string, count: number
