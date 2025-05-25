@@ -11,9 +11,10 @@ export const generateTests = async (req: Request, res: Response) => {
             'INSERT INTO tests (subject, topic, grade, questions) VALUES ($1, $2, $3, $4) RETURNING *',
             [subject, topic, grade, JSON.stringify(tests)]
         );
-        res.json({ tests: result.rows[0].questions });
+        res.json({ tests: result.rows[0].questions, testId: result.rows[0].id });
     } catch (e: any) {
-        res.status(500).json({ error: e.message });
+        console.error('Error in generateTests:', e);
+        res.status(500).json({ error: e.message, stack: e.stack });
     }
 };
 
@@ -25,7 +26,8 @@ export const getTestById = async (req: Request, res: Response) => {
         if (!result.rows.length) return res.status(404).json({ error: 'Test not found' });
         res.json(result.rows[0]);
     } catch (e: any) {
-        res.status(500).json({ error: e.message });
+        console.error('Error in getTestById:', e);
+        res.status(500).json({ error: e.message, stack: e.stack });
     }
 };
 

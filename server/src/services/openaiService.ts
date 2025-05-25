@@ -20,7 +20,7 @@ export const generateTests = async (
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                model: 'gpt-4o',
+                model: 'gpt-4o-mini',
                 messages: [
                     { role: 'system', content: 'You are a helpful teacher who creates test questions for students.' },
                     { role: 'user', content: prompt }
@@ -48,9 +48,12 @@ export const generateTests = async (
 
     const text = data.choices[0].message.content.trim();
 
+    // Remove code block markers if present
+    const cleanedText = text.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+
     let tests: Test[];
     try {
-        tests = JSON.parse(text);
+        tests = JSON.parse(cleanedText);
     } catch (e) {
         // Logging in for diagnostics
         console.error('Failed to parse OpenAI response:', text);

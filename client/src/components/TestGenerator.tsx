@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { generateTests } from '../api/api';
 import type { Test } from '../types';
 
+// ОНОВЛЕНИЙ інтерфейс пропсів: тепер приймає 3 аргументи!
 interface TestGeneratorProps {
-  onTestsGenerated: (tests: Test[], testMeta: { subject: string; topic: string; grade: string }) => void;
+  onTestsGenerated: (
+    tests: Test[],
+    testMeta: { subject: string; topic: string; grade: string },
+    testId: number
+  ) => void;
 }
 
 export const TestGenerator: React.FC<TestGeneratorProps> = ({ onTestsGenerated }) => {
@@ -17,8 +22,9 @@ export const TestGenerator: React.FC<TestGeneratorProps> = ({ onTestsGenerated }
     e.preventDefault();
     setLoading(true);
     try {
-      const tests = await generateTests(subject, topic, grade, count);
-      onTestsGenerated(tests, { subject, topic, grade });
+      // generateTests повертає { tests, testId }
+      const { tests, testId } = await generateTests(subject, topic, grade, count);
+      onTestsGenerated(tests, { subject, topic, grade }, testId); // 3 аргументи!
     } catch (err: any) {
       alert(err.message || "Не вдалося згенерувати тести");
     } finally {
@@ -40,7 +46,9 @@ export const TestGenerator: React.FC<TestGeneratorProps> = ({ onTestsGenerated }
         placeholder="Кількість питань"
         required
       />
-      <button type="submit" disabled={loading}>{loading ? "Генеруємо..." : "Згенерувати тести"}</button>
+      <button type="submit" disabled={loading}>
+        {loading ? "Генеруємо..." : "Згенерувати тести"}
+      </button>
     </form>
   );
 };

@@ -4,7 +4,7 @@ import type { Test } from '../types';
 
 export const generateTests = async (
   subject: string, topic: string, grade: string, count: number
-): Promise<Test[]> => {
+): Promise<{ tests: Test[]; testId: number }> => {
   const res = await fetch(`${API_URL}/generate-tests`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -12,7 +12,7 @@ export const generateTests = async (
   });
   if (!res.ok) throw new Error('Failed to generate tests');
   const data = await res.json();
-  return data.tests;
+  return { tests: data.tests, testId: data.testId };
 };
 
 export const checkAnswers = async (
