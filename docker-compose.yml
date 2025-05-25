@@ -5,10 +5,8 @@ services:
     image: postgres:15
     container_name: testgen-db
     restart: always
-    environment:
-      POSTGRES_DB: testgen
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+    env_file:
+      - ./server/.env.docker
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
@@ -33,6 +31,8 @@ services:
     build: ./client
     container_name: testgen-frontend
     restart: always
+    env_file:
+      - ./client/.env.docker
     depends_on:
       - backend
     ports:

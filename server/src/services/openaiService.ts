@@ -1,14 +1,4 @@
-type TestOption = {
-    A: string;
-    B: string;
-    C: string;
-    D: string;
-};
-export type Test = {
-    question: string;
-    options: TestOption;
-    correct_answer: string;
-};
+import { Test, TestOption } from '../types'
 
 export const generateTests = async (
     subject: string, topic: string, grade: string, count: number
@@ -21,33 +11,61 @@ export const generateTests = async (
     No explanations. JSON only.
     `;
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            model: 'gpt-4o',
-            messages: [
-                { role: 'system', content: 'You are a helpful teacher who creates test questions for students.'},
-                { role: 'user', content: prompt }
-            ],
-            max_tokens: 1500,
-            temperature: 0.5, // Maybe I can use this to set the difficulty of the tests
-        }),
-    });
+    let response: Response;
+    try {
+        response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                model: 'gpt-4o',
+                messages: [
+                    { role: 'system', content: 'You are a helpful teacher who creates test questions for students.' },
+                    { role: 'user', content: prompt }
+                ],
+                max_tokens: 1500,
+                temperature: 0.5,
+            }),
+        });
+    } catch (err) {
+        throw new Error('Failed to connect to OpenAI API');
+    }
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
 
     const data = await response.json() as {
         choices: { message: { content: string } }[];
     };
+
+    if (!data.choices || !data.choices[0]?.message?.content) {
+        throw new Error('Invalid response from OpenAI API');
+    }
+
     const text = data.choices[0].message.content.trim();
 
     let tests: Test[];
     try {
         tests = JSON.parse(text);
     } catch (e) {
-        throw new Error('Failed to parse OpenAI response');
+        // Logging in for diagnostics
+        console.error('Failed to parse OpenAI response:', text);
+        throw new Error('Failed to parse OpenAI response as JSON');
     }
+
+    // Checking the test structure (optional)
+    if (!Array.isArray(tests) || !tests.every(q =>
+        typeof q.question === 'string' &&
+        typeof q.correct_answer === 'string' &&
+        typeof q.options === 'object' &&
+        (['A', 'B', 'C', 'D'] as Array<keyof TestOption>).every(k => typeof q.options[k] === 'string')
+    )) {
+        throw new Error('OpenAI response does not match expected test format');
+    }
+
     return tests;
 };

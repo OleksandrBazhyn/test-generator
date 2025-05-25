@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS tests (
+    id SERIAL PRIMARY KEY,
+    subject VARCHAR(100) NOT NULL,
+    topic VARCHAR(255) NOT NULL,
+    grade VARCHAR(20) NOT NULL,
+    questions JSONB NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS answers (
+    id SERIAL PRIMARY KEY,
+    test_id INTEGER REFERENCES tests(id),
+    user_answers JSONB NOT NULL,
+    score INTEGER,
+    mistakes JSONB,
+    checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
