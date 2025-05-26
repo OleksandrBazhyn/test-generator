@@ -1,28 +1,42 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-/**
- * LandingPage - main entry page for the Test Generator application.
- */
+const cardStyle: React.CSSProperties = {
+  background: "#f9f9f9",
+  borderRadius: 16,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  padding: 32,
+  marginBottom: 24,
+  textAlign: "left"
+};
+
 const LandingPage: React.FC = () => (
-  <main style={{ maxWidth: 600, margin: '0 auto', padding: 24 }}>
-    <h1>Test Generator Online</h1>
-    <p>
-      Create unique tests on any topic and difficulty, take them online or export to PDF.<br />
-      You can also check answers to a test by its ID.
-    </p>
-    <nav style={{ marginTop: 32 }}>
-      <Link to="/generate">
-        <button style={{ marginRight: 16 }}>Generate & Take Test</button>
-      </Link>
-      <Link to="/results">
-        <button style={{ marginRight: 16 }}>Check Test by ID</button>
-      </Link>
-      <Link to="/export-pdf">
-        <button>Export PDF by Test ID</button>
-      </Link>
-    </nav>
-  </main>
+  <div>
+    <h1>Test Generator</h1>
+    <div style={{ display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "center", marginTop: 40 }}>
+      <div style={cardStyle}>
+        <h3>📝 Generate a Test</h3>
+        <p>Create unique tests on any topic and difficulty. Save, pass, and export them as PDF.</p>
+        <Link to="/generate">
+          <button>Generate & Take Test</button>
+        </Link>
+      </div>
+      <div style={cardStyle}>
+        <h3>🔎 Check Results</h3>
+        <p>Enter a test ID and your answers to check your score.</p>
+        <Link to="/results">
+          <button>Check Test by ID</button>
+        </Link>
+      </div>
+      <div style={cardStyle}>
+        <h3>📄 Export PDF by Test ID</h3>
+        <p>Download any saved test in PDF format using its ID.</p>
+        <Link to="/export-pdf">
+          <button>Export PDF</button>
+        </Link>
+      </div>
+    </div>
+  </div>
 );
 
 export default LandingPage;
