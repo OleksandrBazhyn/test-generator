@@ -5,6 +5,7 @@ import LandingPage from "./components/LandingPage";
 import TestGenerationPage from "./components/TestGenerationPage";
 import ResultsPage from "./components/ResultsPage";
 import ExportPdfById from "./components/ExportPdfById";
+import AboutPage from "./components/AboutPage";
 
 /**
  * App - main entry point of the client-side application.
@@ -18,6 +19,7 @@ const App: React.FC = () => (
         <Route path="/generate" element={<TestGenerationPage />} />
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/export-pdf" element={<ExportPdfById />} />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
     </AppLayout>
   </Router>

@@ -19,6 +19,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
         <Link to="/generate">Generate</Link>
         <Link to="/results">Results</Link>
         <Link to="/export-pdf">Export PDF</Link>
+        <Link to="/about">About the site</Link>
       </nav>
     </header>
     {children}

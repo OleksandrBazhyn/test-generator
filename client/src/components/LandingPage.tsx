@@ -12,7 +12,6 @@ const cardStyle: React.CSSProperties = {
 
 const LandingPage: React.FC = () => (
   <div>
-    <h1>Test Generator</h1>
     <div style={{ display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "center", marginTop: 40 }}>
       <div style={cardStyle}>
         <h3>📝 Generate a Test</h3>
