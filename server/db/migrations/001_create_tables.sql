@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS tests (
     subject VARCHAR(100) NOT NULL,
     topic VARCHAR(255) NOT NULL,
     description TEXT,
-    difficulty VARCHAR(20),
-    grade VARCHAR(20),
+    difficulty VARCHAR(50),
+    grade VARCHAR(50),
     questions JSONB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
