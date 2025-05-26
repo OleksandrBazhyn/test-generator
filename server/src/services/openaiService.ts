@@ -26,12 +26,40 @@ export const generateTests = async (
     }
 
     const prompt = `
-        Generate ${count} multiple-choice questions for subject: "${subject}", topic: "${topic}"${grade ? `, grade: ${grade}` : ''}${description ? `, requirements: ${description}` : ''}${difficulty ? `, difficulty: ${difficulty}` : ''}.
-        Each question must include: question text, four answer options (A, B, C, D), and the correct answer (letter only).
-        Return result as valid JSON array like:
-        [{"question": "...", "options": {"A": "...", "B": "...", "C": "...", "D": "..."}, "correct_answer": "A"}]
-        No explanations. JSON only.
+        Generate exactly ${count} multiple-choice questions in JSON format with the following properties:
+        - "subject": "${subject}"
+        - "topic": "${topic}"${grade ? `\n- "grade": "${grade}"` : ''}${difficulty ? `\n- "difficulty": "${difficulty}"` : ''}
+        ${description ? `- "requirements": "${description}"\n` : ''}
+        Each question object must strictly adhere to the following structure:
+        {
+            "question": "<Question text>",
+            "options": {
+                "A": "<Option A>",
+                "B": "<Option B>",
+                "C": "<Option C>",
+                "D": "<Option D>"
+            },
+            "correct_answer": "<Correct option letter (A, B, C, or D)>"
+        }
+
+        Requirements:
+        - All questions must be relevant to the provided subject and topic.
+        - Questions should accurately reflect specified difficulty (if provided).
+        - Avoid ambiguous or unclear wording.
+        - Ensure that only one option is correct for each question.
+        - No explanations or additional text outside the JSON array.
+        - Validate carefully to avoid incorrect correct_answer fields.
+
+        Return only a valid JSON array like:
+        [
+            {
+                "question": "...",
+                "options": {"A": "...", "B": "...", "C": "...", "D": "..."},
+                "correct_answer": "A"
+            }
+        ]
     `;
+
 
     let response: Response;
     try {
