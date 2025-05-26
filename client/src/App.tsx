@@ -1,9 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './components/LandingPage';
-import TestGenerationPage from './components/TestGenerationPage';
-import ResultsPage from './components/ResultsPage';
-import ExportPdfById from './components/ExportPdfById';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AppLayout from "./components/AppLayout";
+import LandingPage from "./components/LandingPage";
+import TestGenerationPage from "./components/TestGenerationPage";
+import ResultsPage from "./components/ResultsPage";
+import ExportPdfById from "./components/ExportPdfById";
+import AboutPage from "./components/AboutPage";
 
 /**
  * App - main entry point of the client-side application.
@@ -11,12 +13,15 @@ import ExportPdfById from './components/ExportPdfById';
  */
 const App: React.FC = () => (
   <Router>
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/generate" element={<TestGenerationPage />} />
-      <Route path="/results" element={<ResultsPage />} />
-      <Route path="/export-pdf" element={<ExportPdfById />} />
-    </Routes>
+    <AppLayout>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/generate" element={<TestGenerationPage />} />
+        <Route path="/results" element={<ResultsPage />} />
+        <Route path="/export-pdf" element={<ExportPdfById />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
+    </AppLayout>
   </Router>
 );
 
