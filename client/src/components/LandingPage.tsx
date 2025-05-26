@@ -16,7 +16,10 @@ const LandingPage: React.FC = () => (
         <button style={{ marginRight: 16 }}>Generate & Take Test</button>
       </Link>
       <Link to="/results">
-        <button>Check Test by ID</button>
+        <button style={{ marginRight: 16 }}>Check Test by ID</button>
+      </Link>
+      <Link to="/export-pdf">
+        <button>Export PDF by Test ID</button>
       </Link>
     </nav>
   </main>

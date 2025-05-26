@@ -4,7 +4,7 @@ import {
   getTestById,
   checkAnswers
 } from "../controllers/testsController";
-import { exportPDF } from "../controllers/pdfController";
+import { exportPDF, exportPDFByTestId  } from "../controllers/pdfController";
 
 /**
  * Wraps async route handlers and forwards errors to Express error middleware.
@@ -201,5 +201,32 @@ router.post('/check-answers', asyncHandler(checkAnswers));
  *         description: Invalid input
  */
 router.post('/export-pdf', asyncHandler(exportPDF));
+
+/**
+ * @openapi
+ * /export-pdf/{id}:
+ *   get:
+ *     summary: Export test questions as PDF by test ID
+ *     tags:
+ *       - PDF
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Test ID
+ *     responses:
+ *       200:
+ *         description: PDF file with test questions
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Test not found
+ */
+router.get('/export-pdf/:id', asyncHandler(exportPDFByTestId));
 
 export default router;

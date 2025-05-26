@@ -81,3 +81,16 @@ export const exportPdf = async (
   return res.blob();
 };
 
+/**
+ * Downloads a PDF for a test by its ID from the backend.
+ * @param testId Test ID
+ * @returns PDF file as Blob
+ * @throws Error if backend call fails
+ */
+export const exportPdfByTestId = async (testId: number | string): Promise<Blob> => {
+  const res = await fetch(`${API_URL}/export-pdf/${testId}`, {
+    method: 'GET',
+  });
+  if (!res.ok) throw new Error('Failed to export PDF by ID');
+  return res.blob();
+};

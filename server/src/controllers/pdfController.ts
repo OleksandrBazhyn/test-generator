@@ -2,20 +2,20 @@ import { Request, Response } from 'express';
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
+import pool from '../db';
 
 /**
- * Exports test questions and answers to PDF, without showing correct answers.
+ * Exports test questions to PDF without showing correct or user-selected answers.
  * Adds test ID on the first page.
  * Supports Cyrillic characters using embedded font.
  *
  * @route POST /api/export-pdf
  * @param {Array} questions - Array of questions (must contain `question`, `options`, `correct_answer` fields)
- * @param {Array} [answers] - Array of user answers (optional, to highlight user's selection)
  * @param {number|string} testId - ID of the test to display in PDF
  * @returns PDF file as response
  */
 export const exportPDF = async (req: Request, res: Response) => {
-  const { questions, answers, testId } = req.body;
+  const { questions, testId } = req.body;
 
   // Validate input
   if (!Array.isArray(questions) || questions.length === 0) {
@@ -46,12 +46,10 @@ export const exportPDF = async (req: Request, res: Response) => {
   doc.pipe(res);
 
   // Register a font that supports Cyrillic
-  // You can put a .ttf file with Cyrillic support in your project (e.g. ./fonts/DejaVuSans.ttf)
   const fontPath = path.join(__dirname, '../../fonts/DejaVuSans.ttf');
   if (fs.existsSync(fontPath)) {
     doc.font(fontPath);
   } else {
-    // Fallback to built-in Helvetica (may not support Cyrillic correctly)
     doc.font('Helvetica');
   }
 
@@ -62,17 +60,63 @@ export const exportPDF = async (req: Request, res: Response) => {
   // Title
   doc.fontSize(18).text('Test Questions', { align: 'center' }).moveDown(2);
 
-  // Write questions and user answers (without correct answers)
+  // Write questions only
   questions.forEach((q: any, idx: number) => {
     doc.fontSize(14).text(`${idx + 1}. ${q.question}`);
 
     Object.entries(q.options).forEach(([k, v]) => {
-      const mark = (answers && answers[idx] === k) ? ' (Your answer)' : '';
-      doc.fontSize(12).text(`   ${k}. ${v}${mark}`);
+      doc.fontSize(12).text(`   ${k}. ${v}`);
     });
 
     doc.moveDown(1);
   });
 
   doc.end();
+};
+
+export const exportPDFByTestId = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM tests WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Test not found' });
+    }
+    const test = result.rows[0];
+    const questions = test.questions;
+
+    const doc = new PDFDocument({ margin: 40, size: 'A4' });
+
+    const filename = `test_${id}.pdf`;
+    res.setHeader('Content-disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-type', 'application/pdf');
+
+    doc.pipe(res);
+
+    const fontPath = path.join(__dirname, '../../fonts/DejaVuSans.ttf');
+    if (fs.existsSync(fontPath)) {
+      doc.font(fontPath);
+    } else {
+      doc.font('Helvetica');
+    }
+
+    doc.fontSize(16).text(`Test ID: ${id}`, { align: 'left' });
+    doc.moveDown(2);
+
+    doc.fontSize(18).text('Test Questions', { align: 'center' }).moveDown(2);
+
+    questions.forEach((q: any, idx: number) => {
+      doc.fontSize(14).text(`${idx + 1}. ${q.question}`);
+      Object.entries(q.options).forEach(([k, v]) => {
+        doc.fontSize(12).text(`   ${k}. ${v}`);
+      });
+      doc.moveDown(1);
+    });
+
+    doc.end();
+
+  } catch (err: any) {
+    console.error('Error in exportPDFByTestId:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
