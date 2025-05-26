@@ -81,7 +81,7 @@ export const TestGenerator: React.FC<TestGeneratorProps> = ({ onTestsGenerated }
       <input
         type="number"
         min={1}
-        max={20}
+        max={50}
         value={count}
         onChange={e => setCount(Number(e.target.value))}
         placeholder="Number of questions"
