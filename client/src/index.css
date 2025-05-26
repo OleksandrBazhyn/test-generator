@@ -145,7 +145,6 @@ label:hover {
   background: #f0f4ff;
 }
 
-/* Робимо radio більшим і зручнішим */
 input[type="radio"] {
   accent-color: #646cff;
   width: 18px;
