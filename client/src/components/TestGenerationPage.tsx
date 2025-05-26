@@ -110,7 +110,7 @@ const TestGenerationPage: React.FC = () => {
               {checking ? "Checking..." : "Check"}
             </button>
           )}
-          <PdfExportButton questions={tests} answers={userAnswers} />
+          <PdfExportButton questions={tests} answers={userAnswers} testId={testId!} />
           {result && (
             <div>
               <TestChecker score={result.score} mistakes={result.mistakes} />

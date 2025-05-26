@@ -175,6 +175,9 @@ router.post('/check-answers', asyncHandler(checkAnswers));
  *           schema:
  *             type: object
  *             properties:
+ *               testId:
+ *                 type: integer
+ *                 description: ID of the test to embed in PDF
  *               questions:
  *                 type: array
  *                 items:
@@ -183,6 +186,9 @@ router.post('/check-answers', asyncHandler(checkAnswers));
  *                 type: array
  *                 items:
  *                   type: string
+ *             required:
+ *               - testId
+ *               - questions
  *     responses:
  *       200:
  *         description: PDF file

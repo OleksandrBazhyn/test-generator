@@ -63,18 +63,21 @@ export const checkAnswers = async (
  * Exports test and user answers as a PDF via backend API.
  * @param questions Array of questions
  * @param answers Array of user answers
+ * @param testId Test ID (required by backend)
  * @returns PDF file as Blob
  * @throws Error if backend call fails
  */
 export const exportPdf = async (
   questions: Test[],
-  answers: string[] | null
+  answers: string[] | null,
+  testId: number | string
 ): Promise<Blob> => {
   const res = await fetch(`${API_URL}/export-pdf`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ questions, answers }),
+    body: JSON.stringify({ questions, answers, testId }),
   });
   if (!res.ok) throw new Error('Failed to export PDF');
   return res.blob();
 };
+
