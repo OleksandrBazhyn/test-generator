@@ -1,4 +1,24 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import fs from 'fs';
+import path from 'path';
+
+function resolveApiGlobs() {
+  const root = process.cwd();
+  if (fs.existsSync(path.join(root, 'dist', 'routes'))) {
+    // Docker, production, or node dist/app.js
+    return [
+      path.join('dist', 'routes', '*.js'),
+      path.join('dist', 'controllers', '*.js'),
+      path.join('dist', 'types.js'),
+    ];
+  }
+  // Local via ts-node
+  return [
+    path.join('src', 'routes', '*.ts'),
+    path.join('src', 'controllers', '*.ts'),
+    path.join('src', 'types.ts'),
+  ];
+}
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -35,11 +55,7 @@ const options: swaggerJsdoc.Options = {
     }
   },
   
-  apis: [
-    'src/routes/*.ts',
-    'src/controllers/*.ts',
-    'src/types.ts',
-  ],
+  apis: resolveApiGlobs(),
 };
 
 const swaggerSpec = swaggerJsdoc(options);
