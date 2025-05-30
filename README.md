@@ -80,7 +80,7 @@ npm run dev
 
 ---
 
-### 3. ***Run with Docker Compose (Recommended)**
+### 3. **Run with Docker Compose (Recommended)**
 *Requires Docker and docker-compose.*
 
 ```bash
