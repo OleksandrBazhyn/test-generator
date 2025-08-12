@@ -1,8 +1,12 @@
 # Test Generator — AI-Powered Test Creation and Checking Service
 This project was developed by Oleksandr Bazhyn, a 3rd-year student of group TTP-31, Department of Programming Theory and Technologies, Faculty of Computer Science and Cybernetics, Taras Shevchenko National University of Kyiv, as a coursework project.
 
-Videopresentation:
-[![Videopresentation](https://drive.google.com/uc?export=view&id=1hfZiseKS4hf8F9ifuZPvndShKhbC7hb4)](https://www.youtube.com/watch?v=DtKr-yRznKU)
+## Videopresentation:
+Click below
+
+<a href="https://www.youtube.com/watch?v=DtKr-yRznKU" target="_blank">
+  <img src="https://drive.google.com/uc?export=view&id=1hfZiseKS4hf8F9ifuZPvndShKhbC7hb4" alt="Watch the video">
+</a>
 
 ## Overview
 **Test Generator** is a modern full-stack web application that allows you to:
